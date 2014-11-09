@@ -20,7 +20,11 @@
 
 using namespace std;
 using namespace boost;
+#if defined(NDEBUG)
+# error "LitecoinDark cannot be compiled without assertions."
+#endif
 
+#define REDUCED_REWARDS_BLOCK		60000
 //
 // Global state
 //
@@ -1095,6 +1099,9 @@ int64 static GetBlockValue(int nHeight, int64 nFees)
 //
 unsigned int ComputeMinWork(unsigned int nBase, int64 nTime)
 {
+	return legacy_difficulty.compute_min_work(nBase, nTime);
+}
+{
     // Testnet has min-difficulty blocks
     // after nTargetSpacing*2 time between blocks:
     if (fTestNet && nTime > nTargetSpacing*2)
@@ -1115,6 +1122,17 @@ unsigned int ComputeMinWork(unsigned int nBase, int64 nTime)
 }
 
 unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock)
+{
+	if (false)
+	{
+		return ltcd_difficulty.get_next_work_required(pindexLast, pblock);
+	}
+	else if (pindexLast->nHeight + 1 == REDUCED_REWARDS_BLOCK)
+	{
+		return min_difficulty.get_next_work_required(pindexLast, pblock);
+	}
+	
+}
 {
     unsigned int nProofOfWorkLimit = bnProofOfWorkLimit.GetCompact();
 
