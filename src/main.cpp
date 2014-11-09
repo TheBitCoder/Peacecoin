@@ -16,6 +16,8 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 
+#include <memory>
+
 using namespace std;
 using namespace boost;
 
